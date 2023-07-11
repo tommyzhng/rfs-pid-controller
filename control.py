@@ -10,10 +10,20 @@ class Control:
         self.stopped = False
         self.yAxis = 0
 
+        self.apOn = False
+
     def ControlCenter(self, altitude, fpm, time):
-        self.yAxis = self.pid.compute(altitude, fpm, time)
-        self.joystick(self.yAxis)
-        pass
+        if altitude >= 1000:
+            if not self.apOn:
+                self.activateAP()
+                self.apOn = True
+
+        if altitude <= 125 and altitude != 0:
+            if self.apOn:
+                self.deactivateAP()
+                self.apOn = False
+            self.yAxis = self.pid.compute(altitude, fpm, time)
+            self.joystick(self.yAxis)
 
 
     def start(self, ocr):
@@ -65,19 +75,6 @@ class Control:
         dy = 770+(dy*145)
         pyautogui.moveTo(3500, dy)
         pass
-
-    def temp(self, altitude):
-        if altitude == 0:
-            start = time()
-            while (time() - start) <= 3:
-                pass
-
-        if altitude >= 1000:
-            self.activateAP()
-
-        if altitude <= 125:
-            self.deactivateAP()
-    
 
 
     

@@ -7,11 +7,10 @@ from time import time
 class PID:
     def __init__(self):
         #PID gains
-        self.Kp = 5.6
-        self.Ki = 0
-        self.Kd = 0
 
-        
+        self.Kp = 0.67
+        self.Ki = 0.0052
+        self.Kd = 10.34
 
         #PID params
         self.error = 0
@@ -23,7 +22,7 @@ class PID:
         self.time_step = 0
 
         #setpoint
-        self.setpoint = 3500
+        self.setpoint = 0
 
         #integral
         self.integral_error = 0.0
@@ -67,18 +66,18 @@ class PID:
         self.descentRates = np.append(self.descentRates, fpm)
         self.times = np.append(self.times, self.current_time)
 
-        if self.fpm <= -1500:
-            if self.output < 0:
-                self.output = 0
-        if self.fpm >= 7000:
-            if self.output > 0:
-                self.output = 0
+        #if self.fpm <= -1500:
+            #if self.output < 0:
+                #self.output = 0
+        #if self.fpm >= 7000:
+            #if self.output > 0:
+               # self.output = 0
         self.prev_output = self.output
         
-        if self.current_time >= 600:
-            self.graph(self.times, self.positions, self.descentRates)
+        #if self.current_time >= 45:
+            #self.graph(self.times, self.positions, self.descentRates)
         
-        print(f"P: {round(proportional_term, 3)}, I: {round(integral_term, 3)}, D: {round(derivative_term,3)}, Out: {round(self.output), 3}")
+        print(f"P: {round(proportional_term, 3)}, I: {round(integral_term, 3)}, D: {round(derivative_term,3)}, Out: {round(self.output, 3)}")
         return self.output
         
 
