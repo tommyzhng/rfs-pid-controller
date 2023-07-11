@@ -2,6 +2,8 @@ import cv2 as cv
 from threading import Thread
 import pytesseract
 import re
+from time import time
+
 
 class GetVideo(): #get video from another thread to reduce latency
     def __init__(self):
@@ -37,46 +39,40 @@ class Text():
 
         #preprocess
         self.custom_oem=r'--psm 7 -c tessedit_char_whitelist=-0123456789'
-        self.lastalt = None
-        self.lastfpm = None
+        self.lastalt = self.alt
+        self.lastfpm = self.fpm
         self.lastspd = None
         self.offset = 0
 
         #post processing
         self.pattern = r'^-?\d{1,4}$'
+        self.startTime = time()
+        self.time = 0
 
     def altitude(self, frame):
         x,y,width,height = 579, 668, 42-self.offset, 20
         self.altROI = frame[y:y+height,x:x+width]
         self.altROI = self.preprocessing(self.altROI)
-        self.alt = pytesseract.image_to_string(self.altROI, lang='digits', config=self.custom_oem)
-        self.alt = self.alt.replace("\n",'')
-        self.alt, self.lastalt = self.postprocess(self.alt, self.lastalt)
+        self.altRAW = pytesseract.image_to_string(self.altROI, lang='digits',config=self.custom_oem)
+        self.alt, self.lastalt = self.postprocess(self.altRAW, self.lastalt)
         self.offset = 9 if int(self.alt) <= 105 else 0
+        self.time = time()-self.startTime
+        #print(f"alt: {self.alt}")
 
     def verticalSpeed(self, frame):
-        x,y,width,height = 730, 662, 50, 17
+        x,y,width,height = 240, 424, 50, 17
         self.fpmROI = frame[y:y+height,x:x+width]
         self.fpmROI = self.preprocessing(self.fpmROI)
-        self.fpm = pytesseract.image_to_string(self.fpmROI, lang='digits',config=self.custom_oem)
-        self.fpm = self.fpm.replace("\n",'')
-        self.fpm, self.lastfpm = self.postprocess(self.fpm, self.lastfpm)
-
-    def airspeed(self, frame):
-        x,y,width,height = 435, 670, 35, 20
-        self.spdROI = frame[y:y+height,x:x+width]
-        self.spdROI = self.preprocessing(self.spdROI)
-        self.spd = pytesseract.image_to_string(self.spdROI, lang='digits',config=self.custom_oem)
-        self.spd = self.spd.replace("\n",'')
-        self.spd, self.lastspd = self.postprocess(self.spd, self.lastspd)
-    
+        self.fpmRAW = pytesseract.image_to_string(self.fpmROI, lang='digits',config=self.custom_oem)
+        self.fpm, self.lastfpm = self.postprocess(self.fpmRAW, self.lastfpm)
+        #print(f"fpm: {self.fpm}")
     
     #########     Post/Preprocessing     #########
     def preprocessing(self,frame):
         frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         width = int(frame.shape[1])
         height = int(frame.shape[0])
-        frame = cv.resize(frame, (width*20, height*20))
+        frame = cv.resize(frame, (width*10, height*10))
         
         clahe = cv.createCLAHE(clipLimit=1.8, tileGridSize=(8, 8))
         frame = clahe.apply(frame)
@@ -84,25 +80,25 @@ class Text():
         _, frame = cv.threshold(frame, 115, 255, cv.THRESH_BINARY_INV)
 
         kernel = cv.getStructuringElement(cv.MORPH_RECT, (5, 5))
-        frame = cv.dilate(frame, kernel, iterations=1)
+        frame = cv.dilate(frame, kernel, iterations=2)
         frame = cv.erode(frame, kernel, iterations=2)
-        frame = cv.resize(frame, (width*10, height*10))
 
         return frame
         
     def postprocess(self, curReading, lastReading):
-            if lastReading == None:                             #if last reading is none, continue with cur reading
-                lastReading = curReading
+            curReading = curReading.replace("\n",'')
+            if curReading == '':
+                curReading = lastReading
             
-            if not re.match(self.pattern, curReading):          #if the reading doesnt match pattern, assign cur reading to last
+            if not re.match(self.pattern, str(curReading)):          #if the reading doesnt match pattern, assign cur reading to last
                 curReading = lastReading
                 return curReading, lastReading
             
             try:
                 curReading = int(curReading)
+                lastReading = curReading
             except ValueError:
                 curReading = lastReading
-
             return curReading, lastReading
               
 
@@ -110,7 +106,6 @@ class Text():
     def start(self, video_stream):
         Thread(target=self.get_alt, args=()).start()
         Thread(target=self.get_fpm, args=()).start()
-        Thread(target=self.get_spd, args=()).start()
         self.stream = video_stream
         return self
 
@@ -123,11 +118,6 @@ class Text():
         while not self.stopped:
             if self.stream is not None:
                 self.verticalSpeed(self.stream.frame)
-    
-    def get_spd(self):
-        while not self.stopped:
-            if self.stream is not None:
-                self.airspeed(self.stream.frame)
 
     def stop(self):
         self.stopped = True

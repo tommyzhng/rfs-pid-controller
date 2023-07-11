@@ -32,11 +32,6 @@ class Train:
             if self.apActivated == False:
                 #train model here
                 pass
-
-    def createRL():
-        #logPath = os.path.join('trainingRL', 'logs')
-        pass
-
         
     def start(self, ocr):
         self.ocr = ocr
