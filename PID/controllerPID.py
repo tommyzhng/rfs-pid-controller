@@ -8,9 +8,9 @@ class PID:
     def __init__(self):
         #PID gains
 
-        self.Kp = 0.67
-        self.Ki = 0.0052
-        self.Kd = 10.34
+        self.Kp = 0.523
+        self.Ki = 0
+        self.Kd = 7.434
 
         #PID params
         self.error = 0
@@ -23,7 +23,6 @@ class PID:
 
         #setpoint
         self.setpoint = 0
-
         #integral
         self.integral_error = 0.0
         self.last_error = 0.0
@@ -46,7 +45,7 @@ class PID:
         #calculate error
         self.error = self.setpoint - self.altitude
         self.error = (self.error / 1000)
-        self.integral_error += self.error * self.time_step
+        self.integral_error += (self.error * self.time_step)
         self.derivative_error = (self.error - self.last_error) / self.time_step
 
         # Calculate PID terms
@@ -57,6 +56,7 @@ class PID:
         # Calculate control output
         self.output = proportional_term + integral_term + derivative_term
         self.output = min(max(self.output, -1), 1)
+
 
         #update variables
         self.last_error = self.error
@@ -74,7 +74,7 @@ class PID:
                # self.output = 0
         self.prev_output = self.output
         
-        #if self.current_time >= 45:
+        #if self.current_time >= 60:
             #self.graph(self.times, self.positions, self.descentRates)
         
         print(f"P: {round(proportional_term, 3)}, I: {round(integral_term, 3)}, D: {round(derivative_term,3)}, Out: {round(self.output, 3)}")
