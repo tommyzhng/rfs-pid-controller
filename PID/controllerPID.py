@@ -6,9 +6,9 @@ class PID:
     def __init__(self):
         #PID gains
 
-        self.Kp = 1.125
+        self.Kp = 1.124
         self.Ki = 0
-        self.Kd = 6.48
+        self.Kd = 7.98
 
         #PID params
         self.error = 0
@@ -61,22 +61,18 @@ class PID:
         self.output = proportional_term + integral_term + derivative_term
         self.output = min(max(self.output, -1), 1)
 
-
         #update variables
         self.last_error = self.error
         self.prev_time = self.current_time
         self.last_derivative = self.derivative_error
+        self.prev_output = self.output
         
         self.positions = np.append(self.positions, altitude)
         self.descentRates = np.append(self.descentRates, fpm)
         self.times = np.append(self.times, self.current_time)
-
-        self.prev_output = self.output
-        
-        #self.graph(self.times, self.positions, self.descentRates)
-        
-        print(f"P: {round(proportional_term, 3)}, I: {round(integral_term, 3)}, D: {round(derivative_term,3)}, Out: {round(self.output, 3)}")
+    
         return self.output
+    
         
 
     def graph(self, times, positions, descentRates):

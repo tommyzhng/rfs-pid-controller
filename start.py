@@ -12,7 +12,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 adbSize = "adb shell wm size 1080x1920"
-startcmd = "scrcpy --video-codec=h264 --video-bit-rate=12M --max-fps=30"
+startcmd = "scrcpy --video-codec=h265 --video-bit-rate=16M --max-fps=60"
 
 os.system(adbSize)
 os.system(startcmd)

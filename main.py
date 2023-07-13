@@ -9,6 +9,9 @@ control = Control().start(ocr)
 
 time.sleep(.5)
 while True:
+    if control.dy != None:
+        video_stream.frame = cv.circle(video_stream.frame, (1020, int(control.dy*0.666667)), 50, (0,0,255), 4)
+    
     cv.imshow("main", video_stream.frame)
     cv.imshow("altitude (ft)", ocr.altROI)
     cv.imshow("descent rate (fpm)", ocr.fpmROI)
