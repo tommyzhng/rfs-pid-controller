@@ -1,31 +1,32 @@
-import pyautogui
 import numpy as np
 import matplotlib.pyplot as plt
-import keyboard
 from time import time
 
 class PID:
     def __init__(self):
         #PID gains
 
-        self.Kp = 0.523
+        self.Kp = 1.125
         self.Ki = 0
-        self.Kd = 7.434
+        self.Kd = 6.48
 
         #PID params
         self.error = 0
         self.derivative_error = 0
+        self.last_error = 0
+        self.integral_error = 0
+
+        self.last_derivative = 0
+
         self.output = 0
         self.prev_output = self.output
+
         self.prev_time = 0
         self.current_time = 0
         self.time_step = 0
 
         #setpoint
         self.setpoint = 0
-        #integral
-        self.integral_error = 0.0
-        self.last_error = 0.0
 
         #plotting
         self.positions = np.array([])
@@ -46,7 +47,10 @@ class PID:
         self.error = self.setpoint - self.altitude
         self.error = (self.error / 1000)
         self.integral_error += (self.error * self.time_step)
-        self.derivative_error = (self.error - self.last_error) / self.time_step
+        self.derivative_error = ((self.error - self.last_error) / self.time_step)
+
+        if self.derivative_error == 0:
+            self.derivative_error = self.last_derivative
 
         # Calculate PID terms
         proportional_term = self.Kp * self.error
@@ -61,21 +65,15 @@ class PID:
         #update variables
         self.last_error = self.error
         self.prev_time = self.current_time
+        self.last_derivative = self.derivative_error
         
         self.positions = np.append(self.positions, altitude)
         self.descentRates = np.append(self.descentRates, fpm)
         self.times = np.append(self.times, self.current_time)
 
-        #if self.fpm <= -1500:
-            #if self.output < 0:
-                #self.output = 0
-        #if self.fpm >= 7000:
-            #if self.output > 0:
-               # self.output = 0
         self.prev_output = self.output
         
-        #if self.current_time >= 60:
-            #self.graph(self.times, self.positions, self.descentRates)
+        #self.graph(self.times, self.positions, self.descentRates)
         
         print(f"P: {round(proportional_term, 3)}, I: {round(integral_term, 3)}, D: {round(derivative_term,3)}, Out: {round(self.output, 3)}")
         return self.output

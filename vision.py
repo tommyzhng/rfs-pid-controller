@@ -4,7 +4,6 @@ import pytesseract
 import re
 from time import time
 
-
 class GetVideo(): #get video from another thread to reduce latency
     def __init__(self):
         self.stream = cv.VideoCapture(2, cv.CAP_DSHOW)
@@ -55,7 +54,7 @@ class Text():
         self.altROI = self.preprocessing(self.altROI)
         self.altRAW = pytesseract.image_to_string(self.altROI, lang='digits',config=self.custom_oem)
         self.alt, self.lastalt = self.postprocess(self.altRAW, self.lastalt)
-        self.offset = 9 if int(self.alt) <= 105 else 0
+        self.offset = 9 if int(self.alt) <= 103 else 0
         self.time = time()-self.startTime
         #print(f"alt: {self.alt}")
 

@@ -11,20 +11,32 @@ class Control:
         self.yAxis = 0
 
         self.apOn = False
+        self.landed = False
+        self.landedTime = 0
 
     def ControlCenter(self, altitude, fpm, time):
         if altitude >= 1000:
             if not self.apOn:
                 self.activateAP()
                 self.apOn = True
+                return
+            return
 
-        if altitude <= 125 and altitude != 0:
+        if altitude <= 130 and altitude != 0 and not self.landed:
             if self.apOn:
                 self.deactivateAP()
                 self.apOn = False
             self.yAxis = self.pid.compute(altitude, fpm, time)
             self.joystick(self.yAxis)
+            return
+        
+        if altitude == 0 and not self.landed:
+            self.landedTime = time
+            self.landed = True
 
+        if 3 <= (time - self.landedTime) <= 5:
+            pyautogui.mouseUp()
+            self.pid.graph(self.pid.times, self.pid.positions, self.pid.descentRates)
 
     def start(self, ocr):
         self.ocr = ocr
@@ -68,13 +80,12 @@ class Control:
 
     def joystick(self, dy):
         if self.pidON == False:
-            pyautogui.moveTo(3500,770)
+            pyautogui.moveTo(3450,770)
             pyautogui.mouseDown()
             self.pidON = True
         
         dy = 770+(dy*145)
-        pyautogui.moveTo(3500, dy)
-        pass
+        pyautogui.moveTo(3450, dy)
 
 
     
