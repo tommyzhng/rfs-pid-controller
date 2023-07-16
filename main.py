@@ -15,7 +15,7 @@ while True:
     cv.imshow("main", video_stream.frame)
     cv.imshow("altitude (ft)", ocr.altROI)
     cv.imshow("descent rate (fpm)", ocr.fpmROI)
-    #print(f"            altitude: {ocr.alt} ft               descent rate: {ocr.fpm} fpm")
+    #print(f"altitude: {ocr.alt} ft descent rate: {ocr.fpm} fpm")
 
     pressed_key = cv.waitKey(1) & 0xFF
     if pressed_key == ord('q'):

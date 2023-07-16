@@ -45,7 +45,7 @@ class Control:
             print("Landed...")
             sleep(2)
             print("starting world domination")
-            #self.pid.graph(self.pid.times, self.pid.positions, self.pid.descentRates)
+            self.pid.graph(self.pid.times, self.pid.positions, self.pid.descentRates)
 
     def start(self, ocr):
         self.ocr = ocr
