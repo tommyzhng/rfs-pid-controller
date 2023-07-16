@@ -9,7 +9,7 @@ This project contains 4 Python scripts that are called when running main.py. Eac
 - vision.py is used to convert an obs virtual camera source video feed into numbers, using tesseract ocr. It obtains the altitude and descent rate readings from the game using a pre-trained number recognition model. 
 - control.py is used to establish the pyautogui commands, along with hosting a control center for calling the PID controller.
 - controllerPID.py is where the PID is located.
-	
+  - This was a basic PID system, where the terms were calculated based on the altitude measurements. This project could not have any overshoot since the goal is to land a plane smoothly in a simulation. This caused the derivative gain to rise and the integral gain to lower.
 ## Technologies
 The project is created with:
 * tesseract-OCR version 5.3.2
