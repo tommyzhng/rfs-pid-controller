@@ -10,6 +10,8 @@ This project contains 4 Python scripts that are called when running main.py. Eac
 - control.py is used to establish the pyautogui commands, along with hosting a control center for calling the PID controller.
 - controllerPID.py is where the PID is located.
   - This was a basic PID system, where the terms were calculated based on the altitude measurements. This project could not have any overshoot since the goal is to land a plane smoothly in a simulation. This caused the derivative gain to rise and the integral gain to lower.
+ 
+- start.py was used to start up ADB to resize my phone screen to 1920x1080 and boot up SCRCPY (android screen mirror app) in a custom config. This script is not called when main.py is running.
 ## Technologies
 The project is created with:
 * tesseract-OCR version 5.3.2
