@@ -6,9 +6,9 @@ class PID:
     def __init__(self):
         #PID gains
 
-        self.Kp = 1.124
+        self.Kp = 1.012
         self.Ki = 0
-        self.Kd = 7.98
+        self.Kd = 10.3
 
         #PID params
         self.error = 0

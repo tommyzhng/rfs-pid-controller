@@ -39,12 +39,12 @@ class Control:
             self.landed = True
             print("Touchdown")
 
-        if 3 <= (time - self.landedTime) <= 3.15:
+        if 3 <= (time - self.landedTime) <= 3.5:
             pyautogui.mouseUp()
             self.dy = None
             print("Landed...")
             sleep(2)
-            print("starting world domination :)")
+            print("starting world domination")
             #self.pid.graph(self.pid.times, self.pid.positions, self.pid.descentRates)
 
     def start(self, ocr):

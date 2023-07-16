@@ -50,8 +50,8 @@ class Text():
 
     def altitude(self, frame):
         x,y,width,height = 579, 668, 42-self.offset, 20
-        self.altROI = frame[y:y+height,x:x+width]
-        self.altROI = self.preprocessing(self.altROI)
+        self.altROIpre = frame[y:y+height,x:x+width]
+        self.altROI = self.preprocessing(self.altROIpre)
         self.altRAW = pytesseract.image_to_string(self.altROI, lang='digits',config=self.custom_oem)
         self.alt, self.lastalt = self.postprocess(self.altRAW, self.lastalt)
         self.offset = 9 if int(self.alt) <= 103 else 0
@@ -60,8 +60,8 @@ class Text():
 
     def verticalSpeed(self, frame):
         x,y,width,height = 240, 424, 50, 17
-        self.fpmROI = frame[y:y+height,x:x+width]
-        self.fpmROI = self.preprocessing(self.fpmROI)
+        self.fpmROIpre = frame[y:y+height,x:x+width]
+        self.fpmROI = self.preprocessing(self.fpmROIpre)
         self.fpmRAW = pytesseract.image_to_string(self.fpmROI, lang='digits',config=self.custom_oem)
         self.fpm, self.lastfpm = self.postprocess(self.fpmRAW, self.lastfpm)
         #print(f"fpm: {self.fpm}")
