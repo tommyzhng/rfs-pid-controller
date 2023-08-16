@@ -24,5 +24,5 @@ The project is created with:
 
 See below for a result video
 
-https://github.com/tommyzhng/rfs-pid-controller/assets/109367999/d6a82b24-2f2c-4278-b067-9b7da1531a8d
+https://github.com/tommyzhng/rfs-pid-controller/assets/109367999/06e3d269-8e0e-4834-b0f1-ca80985c50c5
 
